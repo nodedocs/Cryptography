@@ -29,10 +29,12 @@ The hashes that work with crypto are dependent on what your version of OpenSSL s
 
 Crypto has a method called `createHash` which allows you to calculate a hash. Its only argument is a string representing the hash This example finds the md5 hash for the string, "Man oh man do I love node!":
 
-    require("crypto")
-      .createHash("md5")
-      .update("Man oh man do I love node!")
-      .digest("hex");
+```javascript
+require("crypto")
+  .createHash("md5")
+  .update("Man oh man do I love node!")
+  .digest("hex");
+```
 
 The `update` method is used to push data to later be turned into a hash with the `digest` method. `update` can be invoked multiple times to ingest streaming data, such as buffers from a file read stream. The argument for `digest` represents the output format, and may either be "binary", "hex" or "base64". It defaults to binary.
 
@@ -42,9 +44,11 @@ HMAC stands for Hash-based Message Authentication Code, and is a process for app
 
 The API for hmacs is very similar to that of `createHash`, except that the method is called `createHmac` and it takes a key as a second argument:
 
-    require("crypto").createHmac("md5", "password")
-      .update("If you love node so much why don't you marry it?")
-      .digest("hex");
+```javascript
+require("crypto").createHmac("md5", "password")
+  .update("If you love node so much why don't you marry it?")
+  .digest("hex");
+```
 
 The resulting md5 hash is unique to both the input data and the key.
 
@@ -67,34 +71,35 @@ Both of these methods take arguments similarly to `createHmac`. They also both h
 
 Here's an example, slightly less trivial than previous examples, that uses crypto and [optimist](https://github.com/substack/node-optimist) to encode and decode messages from the command line:
 
-    #!/usr/bin/env node
+```javascript
+#!/usr/bin/env node
 
-    var crypto = require("crypto"),
-        argv = require("optimist").argv;
+var crypto = require("crypto"),
+    argv = require("optimist").argv;
 
-    if (argv.e && argv.password) {
-        var cipher = crypto.createCipher("aes192", argv.password),
-            msg = [];
+if (argv.e && argv.password) {
+    var cipher = crypto.createCipher("aes192", argv.password),
+    msg = [];
 
-        argv._.forEach( function (phrase) {
-            msg.push(cipher.update(phrase, "binary", "hex"));
-        });
+    argv._.forEach( function (phrase) {
+      msg.push(cipher.update(phrase, "binary", "hex"));
+    });
 
-        msg.push(cipher.final("hex"));
-        console.log(msg.join(""));
+    msg.push(cipher.final("hex"));
+    console.log(msg.join(""));
 
-    } else if (argv.d && argv.password) {
-        var decipher = crypto.createDecipher("aes192", argv.password),
-            msg = [];
+} else if (argv.d && argv.password) {
+  var decipher = crypto.createDecipher("aes192", argv.password),
+      msg = [];
 
-        argv._.forEach( function (phrase) {
-            msg.push(decipher.update(phrase, "hex", "binary"));
-        });
+  argv._.forEach( function (phrase) {
+    msg.push(decipher.update(phrase, "hex", "binary"));
+  });
 
-        msg.push(decipher.final("binary"));
-        console.log(msg.join(""));   
-    }
-
+  msg.push(decipher.final("binary"));
+  console.log(msg.join(""));   
+}
+```
 Using this script to encode a message looks like this:
 
     $ ./secretmsg.js -e --password="popcorn" "My treasure is buried behind Carl's Jr. on Telegraph."
